@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>陪玩店推荐助手</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="page-bg"></div>
+
+  <header class="header">
+    <div class="header-inner">
+      <div class="logo">
+        <span class="logo-icon">🎮</span>
+        <div>
+          <h1>陪玩店推荐助手</h1>
+          <p class="tagline">智能整理 · 精准匹配 · 安全提醒</p>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <section class="hero card">
+      <h2>告诉我你的陪玩需求</h2>
+      <p class="hero-desc">
+        填写游戏、风格、预算和时段，系统将为您整理结构化推荐。
+        需求不明确时，会引导您补充关键信息。
+      </p>
+      <div class="example-box">
+        <span class="example-label">示例需求</span>
+        <p>「我想找《永劫无间》的技术型陪玩，能带我上分，价格不要太贵，最好晚上能打。」</p>
+        <button type="button" class="btn-link" id="fillExample">一键填入示例</button>
+      </div>
+    </section>
+
+    <section class="form-section card">
+      <form id="requirementForm" novalidate>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="game">游戏类型</label>
+            <select id="game" name="game">
+              <option value="">请选择游戏</option>
+            </select>
+          </div>
+
+          <div class="form-group" id="customGameGroup" hidden>
+            <label for="customGame">其他游戏名称</label>
+            <input type="text" id="customGame" name="customGame" placeholder="请输入游戏名称">
+          </div>
+
+          <div class="form-group full-width">
+            <label>陪玩风格 <span class="hint">可多选</span></label>
+            <div class="checkbox-grid" id="styleOptions"></div>
+          </div>
+
+          <div class="form-group">
+            <label for="budget">价格预算</label>
+            <select id="budget" name="budget"></select>
+          </div>
+
+          <div class="form-group full-width">
+            <label>可玩时段 <span class="hint">可多选</span></label>
+            <div class="checkbox-grid" id="timeOptions"></div>
+          </div>
+
+          <div class="form-group full-width">
+            <label for="extra">补充需求</label>
+            <textarea
+              id="extra"
+              name="extra"
+              rows="3"
+              placeholder="例如：想要小姐姐陪玩、可语音试音、支持包夜、指定段位等…"
+            ></textarea>
+          </div>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">获取推荐</button>
+          <button type="reset" class="btn btn-secondary">清空表单</button>
+        </div>
+      </form>
+    </section>
+
+    <section id="resultsSection" class="results-section" hidden>
+      <div id="resultsHeader" class="results-header"></div>
+      <div id="resultsBody"></div>
+    </section>
+
+    <section class="safety card">
+      <h3>安全提醒</h3>
+      <ul>
+        <li>优先通过<strong>正规陪玩平台</strong>下单，使用平台担保交易，避免微信/支付宝私下转账。</li>
+        <li>下单前建议<strong>试音、查看评价、确认段位与价格</strong>，并保留订单记录。</li>
+        <li>本助手仅推荐正规陪玩服务，<strong>不涉及代练、外挂</strong>等违规内容。</li>
+        <li>上分应通过正常对局与指导完成，请注意资金安全。</li>
+      </ul>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>陪玩店推荐助手 · 示例数据仅供演示 · 请通过正规平台交易</p>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/engine.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/auth.js"></script>
+</body>
+</html>

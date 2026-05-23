@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>登录 - 陪玩店推荐助手</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/login.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="login-page">
+  <div class="page-bg"></div>
+
+  <main class="login-main">
+    <a href="index.html" class="back-home">← 返回首页</a>
+
+    <div class="login-card card">
+      <div class="login-brand">
+        <span class="logo-icon">🎮</span>
+        <h1>欢迎回来</h1>
+        <p class="login-subtitle">登录后保存偏好，获取更精准的陪玩推荐</p>
+      </div>
+
+      <div class="login-tabs" role="tablist">
+        <button type="button" class="login-tab active" data-tab="account" role="tab" aria-selected="true">账号登录</button>
+        <button type="button" class="login-tab" data-tab="phone" role="tab" aria-selected="false">手机验证码</button>
+      </div>
+
+      <form id="loginForm" class="login-form" novalidate>
+        <div id="accountPanel" class="login-panel">
+          <div class="form-group">
+            <label for="username">账号</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              autocomplete="username"
+              placeholder="用户名 / 手机号 / 邮箱"
+            >
+            <span class="field-error" id="usernameError"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="password">密码</label>
+            <div class="password-wrap">
+              <input
+                type="password"
+                id="password"
+                name="password"
+                autocomplete="current-password"
+                placeholder="请输入密码"
+              >
+              <button type="button" class="toggle-password" id="togglePassword" aria-label="显示密码">👁</button>
+            </div>
+            <span class="field-error" id="passwordError"></span>
+          </div>
+        </div>
+
+        <div id="phonePanel" class="login-panel" hidden>
+          <div class="form-group">
+            <label for="phone">手机号</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              autocomplete="tel"
+              placeholder="请输入11位手机号"
+              maxlength="11"
+            >
+            <span class="field-error" id="phoneError"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="code">验证码</label>
+            <div class="code-row">
+              <input
+                type="text"
+                id="code"
+                name="code"
+                placeholder="6位验证码"
+                maxlength="6"
+              >
+              <button type="button" class="btn btn-code" id="sendCodeBtn">获取验证码</button>
+            </div>
+            <span class="field-error" id="codeError"></span>
+          </div>
+        </div>
+
+        <div class="login-options">
+          <label class="remember-me">
+            <input type="checkbox" id="remember" name="remember" checked>
+            <span>记住我</span>
+          </label>
+          <a href="#" class="forgot-link" id="forgotLink">忘记密码？</a>
+        </div>
+
+        <button type="submit" class="btn btn-primary btn-block" id="loginBtn">登 录</button>
+
+        <p class="login-tip" id="loginTip"></p>
+      </form>
+
+      <div class="login-divider"><span>或</span></div>
+
+      <div class="demo-box">
+        <p class="demo-label">演示账号（可直接体验）</p>
+        <button type="button" class="btn btn-demo" id="demoLogin">使用演示账号登录</button>
+        <p class="demo-hint">账号：demo · 密码：123456</p>
+      </div>
+
+      <p class="register-line">
+        还没有账号？<a href="#" id="registerLink">立即注册</a>
+      </p>
+    </div>
+
+    <p class="login-footer-note">
+      请通过正规平台交易，注意账号与资金安全
+    </p>
+  </main>
+
+  <script src="js/accounts.js"></script>
+  <script src="js/login.js"></script>
+</body>
+</html>

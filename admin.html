@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>管理后台 - 陪玩店推荐助手</title>
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/admin.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="page-bg"></div>
+
+  <header class="header admin-header">
+    <div class="header-inner admin-header-inner">
+      <div class="logo">
+        <span class="logo-icon">🛡️</span>
+        <div>
+          <h1>管理后台</h1>
+          <p class="tagline">陪玩店数据与推荐管理（演示）</p>
+        </div>
+      </div>
+      <div class="auth-bar" id="adminAuthBar"></div>
+    </div>
+  </header>
+
+  <main class="main admin-main">
+    <section class="admin-welcome card">
+      <div class="welcome-row">
+        <div>
+          <span class="admin-role-badge">ADMIN</span>
+          <h2 id="welcomeTitle">欢迎，管理员</h2>
+          <p class="welcome-desc">您拥有店铺数据查看、推荐统计等演示管理权限。</p>
+        </div>
+        <a href="index.html" class="btn btn-secondary">前往用户首页</a>
+      </div>
+    </section>
+
+    <section class="stats-grid" id="statsGrid"></section>
+
+    <section class="card">
+      <div class="section-head">
+        <h2>店铺列表</h2>
+        <span class="section-count" id="shopCount"></span>
+      </div>
+      <div class="admin-table-wrap">
+        <table class="admin-table" id="shopTable">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>店铺名称</th>
+              <th>游戏</th>
+              <th>风格</th>
+              <th>价格（元/时）</th>
+              <th>时段</th>
+            </tr>
+          </thead>
+          <tbody id="shopTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>管理员后台 · 演示环境 · 数据仅供展示</p>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>
