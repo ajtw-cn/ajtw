@@ -7,6 +7,7 @@
     return;
   }
 
+  loadShopData();
   initAuthBar(session);
   renderDashboard(session);
 
@@ -15,6 +16,26 @@
       return JSON.parse(sessionStorage.getItem(AUTH_KEY));
     } catch {
       return null;
+    }
+  }
+
+  function loadShopData() {
+    try {
+      const raw = localStorage.getItem('admin_shop_data');
+      if (!raw) return;
+      const saved = JSON.parse(raw);
+      if (!Array.isArray(saved)) return;
+      SHOPS.splice(0, SHOPS.length, ...saved);
+    } catch {
+      // ignore invalid storage data
+    }
+  }
+
+  function saveShopData() {
+    try {
+      localStorage.setItem('admin_shop_data', JSON.stringify(SHOPS));
+    } catch {
+      // ignore storage errors
     }
   }
 
@@ -95,6 +116,7 @@
     const idx = SHOPS.findIndex((s) => s.id === id);
     if (idx === -1) return;
     SHOPS.splice(idx, 1);
+    saveShopData();
     renderDashboard(getSession());
   }
 
@@ -139,6 +161,7 @@
         highlight: "新添加店铺"
       };
       SHOPS.push(newShop);
+      saveShopData();
       form.style.display = 'none';
       clearAddForm();
       renderDashboard(getSession());
