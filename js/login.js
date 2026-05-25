@@ -5,12 +5,14 @@
   const USER_RECORDS = [
     {
       username: "zhj",
+      password: "zhj0113190039",
       passwordHash: "338f91960022550c8abaa1edcab9866fcbb24af15ad13ff0e8c4ddb1aec5fdb5",
       role: "admin",
       displayName: "系统管理员"
     },
     {
       username: "demo",
+      password: "123456",
       passwordHash: "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
       role: "user",
       displayName: "演示用户"
@@ -18,18 +20,28 @@
   ];
 
   async function hashPassword(password) {
-    const hashBuffer = await crypto.subtle.digest(
-      "SHA-256",
-      new TextEncoder().encode(password)
-    );
-    return Array.from(new Uint8Array(hashBuffer))
-      .map((byte) => byte.toString(16).padStart(2, "0"))
-      .join("");
+    if (window.crypto && crypto.subtle && crypto.subtle.digest) {
+      const hashBuffer = await crypto.subtle.digest(
+        "SHA-256",
+        new TextEncoder().encode(password)
+      );
+      return Array.from(new Uint8Array(hashBuffer))
+        .map((byte) => byte.toString(16).padStart(2, "0"))
+        .join("");
+    }
+    return password;
   }
 
   async function authenticateAccount(username, password) {
     const record = USER_RECORDS.find((account) => account.username === username);
     if (record) {
+      if (record.password && record.password === password) {
+        return {
+          username: record.username,
+          role: record.role,
+          displayName: record.displayName
+        };
+      }
       if ((await hashPassword(password)) !== record.passwordHash) {
         return null;
       }
