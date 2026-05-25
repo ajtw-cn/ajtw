@@ -1,5 +1,49 @@
 (function () {
   const AUTH_KEY = "pw_user";
+  const DEMO_CODE = "888888";
+
+  const USER_RECORDS = [
+    {
+      username: "zhj",
+      passwordHash: "338f91960022550c8abaa1edcab9866fcbb24af15ad13ff0e8c4ddb1aec5fdb5",
+      role: "admin",
+      displayName: "系统管理员"
+    },
+    {
+      username: "demo",
+      passwordHash: "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
+      role: "user",
+      displayName: "演示用户"
+    }
+  ];
+
+  async function hashPassword(password) {
+    const hashBuffer = await crypto.subtle.digest(
+      "SHA-256",
+      new TextEncoder().encode(password)
+    );
+    return Array.from(new Uint8Array(hashBuffer))
+      .map((byte) => byte.toString(16).padStart(2, "0"))
+      .join("");
+  }
+
+  async function authenticateAccount(username, password) {
+    const record = USER_RECORDS.find((account) => account.username === username);
+    if (record) {
+      if ((await hashPassword(password)) !== record.passwordHash) {
+        return null;
+      }
+      return {
+        username: record.username,
+        role: record.role,
+        displayName: record.displayName
+      };
+    }
+    if (password.length >= 6) {
+      return { username, role: "user", displayName: username };
+    }
+    return null;
+  }
 
   const form = document.getElementById("loginForm");
   const tabs = document.querySelectorAll(".login-tab");
@@ -38,7 +82,14 @@
   sendCodeBtn.addEventListener("click", handleSendCode);
 
   demoLoginBtn.addEventListener("click", () => {
-    fillAndLogin(ACCOUNTS.demo);
+    document.getElementById("username").value = "demo";
+    passwordInput.value = "123456";
+    switchTab("account");
+    clearErrors();
+    doLogin(buildSession(
+      { username: "demo", displayName: "演示用户", role: "user" },
+      "account"
+    ));
   });
 
   forgotLink.addEventListener("click", (e) => {
@@ -63,14 +114,6 @@
     }
   });
 
-  function fillAndLogin(account) {
-    document.getElementById("username").value = account.username;
-    passwordInput.value = account.password;
-    switchTab("account");
-    clearErrors();
-    doLogin(buildSession(account, "account"));
-  }
-
   function switchTab(tab) {
     activeTab = tab;
     tabs.forEach((el) => {
@@ -84,7 +127,7 @@
     clearTip();
   }
 
-  function submitAccountLogin() {
+  async function submitAccountLogin() {
     const username = document.getElementById("username").value.trim();
     const password = passwordInput.value;
 
@@ -103,7 +146,7 @@
 
     if (!valid) return;
 
-    const account = authenticateAccount(username, password);
+    const account = await authenticateAccount(username, password);
     if (!account) {
       setError("passwordError", "账号或密码错误");
       return;
