@@ -1,61 +1,5 @@
 (function () {
-  const AUTH_KEY = "pw_user";
-  const DEMO_CODE = "888888";
-
-  const USER_RECORDS = [
-    {
-      username: "zhj",
-      password: "zhj0113190039",
-      passwordHash: "338f91960022550c8abaa1edcab9866fcbb24af15ad13ff0e8c4ddb1aec5fdb5",
-      role: "admin",
-      displayName: "系统管理员"
-    },
-    {
-      username: "demo",
-      password: "123456",
-      passwordHash: "8d969eef6ecad3c29a3a629280e686cf0c3f5d5a86aff3ca12020c923adc6c92",
-      role: "user",
-      displayName: "演示用户"
-    }
-  ];
-
-  async function hashPassword(password) {
-    if (window.crypto && crypto.subtle && crypto.subtle.digest) {
-      const hashBuffer = await crypto.subtle.digest(
-        "SHA-256",
-        new TextEncoder().encode(password)
-      );
-      return Array.from(new Uint8Array(hashBuffer))
-        .map((byte) => byte.toString(16).padStart(2, "0"))
-        .join("");
-    }
-    return password;
-  }
-
-  async function authenticateAccount(username, password) {
-    const record = USER_RECORDS.find((account) => account.username === username);
-    if (record) {
-      if (record.password && record.password === password) {
-        return {
-          username: record.username,
-          role: record.role,
-          displayName: record.displayName
-        };
-      }
-      if ((await hashPassword(password)) !== record.passwordHash) {
-        return null;
-      }
-      return {
-        username: record.username,
-        role: record.role,
-        displayName: record.displayName
-      };
-    }
-    if (password.length >= 6) {
-      return { username, role: "user", displayName: username };
-    }
-    return null;
-  }
+  const DEMO_CODE = window.LoginAPI?.DEMO_CODE || "888888";
 
   const form = document.getElementById("loginForm");
   const tabs = document.querySelectorAll(".login-tab");
@@ -73,8 +17,8 @@
   let codeCountdown = 0;
   let countdownTimer = null;
 
-  if (getSession()) {
-    redirectByRole(getSession());
+  if (LoginAPI.getSession()) {
+    redirectByRole(LoginAPI.getSession());
     return;
   }
 
@@ -98,10 +42,12 @@
     passwordInput.value = "123456";
     switchTab("account");
     clearErrors();
-    doLogin(buildSession(
+    const session = buildSession(
       { username: "demo", displayName: "演示用户", role: "user" },
       "account"
-    ));
+    );
+    LoginAPI.saveSession(session);
+    doLogin(session);
   });
 
   forgotLink.addEventListener("click", (e) => {
@@ -158,9 +104,9 @@
 
     if (!valid) return;
 
-    const account = await authenticateAccount(username, password);
-    if (!account) {
-      setError("passwordError", "账号或密码错误");
+    const result = await LoginAPI.loginWithPassword(username, password);
+    if (!result.success) {
+      setError("passwordError", result.error);
       return;
     }
 
@@ -170,35 +116,26 @@
       localStorage.removeItem("pw_remember_user");
     }
 
-    doLogin(buildSession(account, "account"));
+    LoginAPI.saveSession(result.session);
+    doLogin(result.session);
   }
 
   function submitPhoneLogin() {
     const phone = document.getElementById("phone").value.trim();
     const code = document.getElementById("code").value.trim();
 
-    let valid = true;
-    if (!/^1\d{10}$/.test(phone)) {
-      setError("phoneError", "请输入正确的11位手机号");
-      valid = false;
-    }
-    if (!/^\d{6}$/.test(code)) {
-      setError("codeError", "请输入6位验证码");
-      valid = false;
-    } else if (code !== DEMO_CODE) {
-      setError("codeError", "验证码错误，演示验证码为 888888");
-      valid = false;
+    const result = LoginAPI.loginWithPhone(phone, code);
+    if (!result.success) {
+      if (!/^1\d{10}$/.test(phone)) {
+        setError("phoneError", result.error);
+      } else {
+        setError("codeError", result.error);
+      }
+      return;
     }
 
-    if (!valid) return;
-
-    doLogin({
-      username: maskPhone(phone),
-      displayName: maskPhone(phone),
-      role: "user",
-      method: "phone",
-      phone
-    });
+    LoginAPI.saveSession(result.session);
+    doLogin(result.session);
   }
 
   function buildSession(account, method, phone) {
@@ -214,8 +151,9 @@
 
   function handleSendCode() {
     const phone = document.getElementById("phone").value.trim();
-    if (!/^1\d{10}$/.test(phone)) {
-      setError("phoneError", "请先输入正确的手机号");
+    const result = LoginAPI.sendVerificationCode(phone);
+    if (!result.success) {
+      setError("phoneError", result.error);
       return;
     }
     if (codeCountdown > 0) return;
@@ -224,7 +162,7 @@
     sendCodeBtn.disabled = true;
     sendCodeBtn.textContent = `${codeCountdown}s 后重发`;
 
-    showTip(`验证码已发送（演示） · 演示验证码：${DEMO_CODE}`, "success");
+    showTip(result.message, "success");
 
     countdownTimer = setInterval(() => {
       codeCountdown -= 1;
@@ -246,7 +184,7 @@
     const isAdmin = session.role === "admin";
 
     setTimeout(() => {
-      saveSession(session);
+      LoginAPI.saveSession(session);
       showTip(
         isAdmin ? "管理员登录成功，正在进入管理后台…" : "登录成功，正在跳转…",
         "success"
@@ -259,17 +197,6 @@
     window.location.href = session.role === "admin" ? "admin.html" : "index.html";
   }
 
-  function saveSession(user) {
-    sessionStorage.setItem(AUTH_KEY, JSON.stringify(user));
-  }
-
-  function getSession() {
-    try {
-      return JSON.parse(sessionStorage.getItem(AUTH_KEY));
-    } catch {
-      return null;
-    }
-  }
 
   function restoreRememberedUsername() {
     const saved = localStorage.getItem("pw_remember_user");

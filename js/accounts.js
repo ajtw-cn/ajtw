@@ -30,3 +30,9 @@ function authenticateAccount(username, password) {
   }
   return null;
 }
+
+window.AccountStore = {
+  findAccount,
+  authenticateAccount,
+  DEMO_CODE
+};
