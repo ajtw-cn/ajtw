@@ -141,6 +141,20 @@
   }
 }
 
+.admin-message {
+  margin-bottom: 1rem;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.admin-message.error {
+  color: var(--danger);
+}
+
+.admin-message.success {
+  color: var(--success);
+}
+
 /* Remove underline for the "前往用户首页" link in admin welcome */
 .admin-welcome .welcome-row a.btn {
   text-decoration: none;

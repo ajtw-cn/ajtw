@@ -138,14 +138,35 @@
       clearAddForm();
     });
 
+    const messageEl = document.getElementById('adminMessage');
+
     saveBtn.addEventListener('click', () => {
+      clearMessage();
       const name = document.getElementById('shopName').value.trim();
       const games = document.getElementById('shopGames').value.split(',').map(s => s.trim()).filter(Boolean);
       const styles = document.getElementById('shopStyles').value.split(',').map(s => s.trim()).filter(Boolean);
-      const priceMin = Number(document.getElementById('priceMin').value) || 0;
-      const priceMax = Number(document.getElementById('priceMax').value) || 0;
+      const priceMinValue = document.getElementById('priceMin').value;
+      const priceMaxValue = document.getElementById('priceMax').value;
+      const priceMin = priceMinValue === '' ? null : Number(priceMinValue);
+      const priceMax = priceMaxValue === '' ? null : Number(priceMaxValue);
 
-      if (!name) { alert('请输入店铺名称'); return; }
+      if (!name) {
+        showMessage('请输入店铺名称', 'error');
+        return;
+      }
+      if (priceMin === null || priceMax === null) {
+        showMessage('请输入最低价和最高价', 'error');
+        return;
+      }
+      if (priceMin < 0 || priceMax < 0) {
+        showMessage('价格不能为负数', 'error');
+        return;
+      }
+      if (priceMin > priceMax) {
+        showMessage('最低价不能高于最高价', 'error');
+        return;
+      }
+
       const newId = (SHOPS.reduce((m, s) => Math.max(m, s.id), 0) || 0) + 1;
       const newShop = {
         id: newId,
@@ -162,10 +183,23 @@
       };
       SHOPS.push(newShop);
       saveShopData();
+      showMessage('店铺已添加', 'success');
       form.style.display = 'none';
       clearAddForm();
       renderDashboard(getSession());
     });
+
+    function showMessage(text, type) {
+      if (!messageEl) return;
+      messageEl.textContent = text;
+      messageEl.className = `admin-message ${type}`;
+    }
+
+    function clearMessage() {
+      if (!messageEl) return;
+      messageEl.textContent = '';
+      messageEl.className = 'admin-message';
+    }
 
     function clearAddForm() {
       document.getElementById('shopName').value = '';
