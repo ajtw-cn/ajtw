@@ -69,16 +69,89 @@
 
     document.getElementById("shopCount").textContent = `共 ${SHOPS.length} 家`;
     document.getElementById("shopTableBody").innerHTML = SHOPS.map((shop) => `
-      <tr>
+      <tr data-id="${shop.id}">
         <td>${shop.id}</td>
         <td>${escapeHtml(shop.name)}</td>
         <td>${escapeHtml(shop.games.slice(0, 2).join("、"))}${shop.games.length > 2 ? "…" : ""}</td>
         <td>${escapeHtml(shop.styles.join("、"))}</td>
         <td>${shop.priceMin}-${shop.priceMax}</td>
         <td>${shop.timeSlots.map((t) => TIME_LABELS[t]).join("、")}</td>
+        <td><button type="button" class="btn btn-secondary btn-delete" data-id="${shop.id}">删除</button></td>
       </tr>
     `).join("");
+
+    // attach delete handlers
+    document.querySelectorAll('.btn-delete').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const id = Number(e.currentTarget.dataset.id);
+        if (confirm('确认删除该店铺？')) {
+          deleteShop(id);
+        }
+      });
+    });
   }
+
+  function deleteShop(id) {
+    const idx = SHOPS.findIndex((s) => s.id === id);
+    if (idx === -1) return;
+    SHOPS.splice(idx, 1);
+    renderDashboard(getSession());
+  }
+
+  // Add shop UI handling
+  (function initAddShop() {
+    const addBtn = document.getElementById('addShopBtn');
+    const form = document.getElementById('addShopForm');
+    const saveBtn = document.getElementById('saveShopBtn');
+    const cancelBtn = document.getElementById('cancelShopBtn');
+
+    if (!addBtn || !form) return;
+
+    addBtn.addEventListener('click', () => {
+      form.style.display = form.style.display === 'none' ? 'block' : 'none';
+    });
+
+    cancelBtn.addEventListener('click', () => {
+      form.style.display = 'none';
+      clearAddForm();
+    });
+
+    saveBtn.addEventListener('click', () => {
+      const name = document.getElementById('shopName').value.trim();
+      const games = document.getElementById('shopGames').value.split(',').map(s => s.trim()).filter(Boolean);
+      const styles = document.getElementById('shopStyles').value.split(',').map(s => s.trim()).filter(Boolean);
+      const priceMin = Number(document.getElementById('priceMin').value) || 0;
+      const priceMax = Number(document.getElementById('priceMax').value) || 0;
+
+      if (!name) { alert('请输入店铺名称'); return; }
+      const newId = (SHOPS.reduce((m, s) => Math.max(m, s.id), 0) || 0) + 1;
+      const newShop = {
+        id: newId,
+        name,
+        games: games.length ? games : ["其他"],
+        styles: styles.length ? styles : ["娱乐型"],
+        priceMin,
+        priceMax,
+        nightPackPrice: null,
+        tags: [],
+        reviews: { good: [], bad: [] },
+        timeSlots: ["evening"],
+        highlight: "新添加店铺"
+      };
+      SHOPS.push(newShop);
+      form.style.display = 'none';
+      clearAddForm();
+      renderDashboard(getSession());
+    });
+
+    function clearAddForm() {
+      document.getElementById('shopName').value = '';
+      document.getElementById('shopGames').value = '';
+      document.getElementById('shopStyles').value = '';
+      document.getElementById('priceMin').value = '';
+      document.getElementById('priceMax').value = '';
+    }
+  })();
 
   function escapeHtml(str) {
     const div = document.createElement("div");

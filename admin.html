@@ -43,7 +43,38 @@
     <section class="card">
       <div class="section-head">
         <h2>店铺列表</h2>
-        <span class="section-count" id="shopCount"></span>
+          <span class="section-count" id="shopCount"></span>
+          <div class="section-actions">
+            <button type="button" id="addShopBtn" class="btn btn-primary">添加店铺</button>
+          </div>
+      </div>
+      <div id="addShopForm" class="card" style="margin-bottom:1rem; display:none;">
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label for="shopName">店铺名称</label>
+            <input type="text" id="shopName" placeholder="例如：星辰陪玩工作室">
+          </div>
+          <div class="form-group">
+            <label for="shopGames">支持游戏（用逗号分隔）</label>
+            <input type="text" id="shopGames" placeholder="英雄联盟,王者荣耀">
+          </div>
+          <div class="form-group">
+            <label for="shopStyles">风格（逗号分隔）</label>
+            <input type="text" id="shopStyles" placeholder="技术型,娱乐型">
+          </div>
+          <div class="form-group">
+            <label for="priceMin">最低价（元/时）</label>
+            <input type="number" id="priceMin" min="0">
+          </div>
+          <div class="form-group">
+            <label for="priceMax">最高价（元/时）</label>
+            <input type="number" id="priceMax" min="0">
+          </div>
+        </div>
+        <div class="form-actions" style="margin-top:1rem;">
+          <button type="button" id="saveShopBtn" class="btn btn-primary">保存</button>
+          <button type="button" id="cancelShopBtn" class="btn btn-secondary">取消</button>
+        </div>
       </div>
       <div class="admin-table-wrap">
         <table class="admin-table" id="shopTable">
@@ -55,6 +86,7 @@
               <th>风格</th>
               <th>价格（元/时）</th>
               <th>时段</th>
+              <th>操作</th>
             </tr>
           </thead>
           <tbody id="shopTableBody"></tbody>
